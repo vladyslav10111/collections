@@ -1,0 +1,8 @@
+services:
+  php:
+    build: .
+    container_name: collection
+    ports:
+      - "8020:80"
+    volumes:
+      - .:/var/www/html
