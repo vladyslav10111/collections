@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Vladyslav10111\Collection;
 
 class CharCounterCache
 {
-    public string $cacheFile;
+    private string $cacheFile;
+    private array $cache = [];
 
     public function __construct(string $cacheFile = __DIR__ . '/cache.json')
     {
@@ -13,39 +15,50 @@ class CharCounterCache
         if (!file_exists($this->cacheFile)) {
             file_put_contents($this->cacheFile, json_encode([]));
         }
+
+        $this->cache = $this->loadCache();
     }
 
-    public function isCached(string $input): bool
-    {
-        $uniqueCharsCache = new CharCounterCache();
-
-        $cache = $uniqueCharsCache->loadCache();
-
-        if (isset($cache[$input])) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function loadCache(): array
+    private function loadCache(): array
     {
         $data = file_get_contents($this->cacheFile);
 
-        if ($data) {
-            $decoded = json_decode($data, true);
-            if (is_array($decoded)) {
-                return $decoded;
-            } else {
-                return [];
-            }
-        } else {
+        if (!$data) {
             return [];
         }
+
+        $decoded = json_decode($data, true);
+
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        return [];
     }
 
-    public function saveCache(array $cache): void
+
+    private function saveCache(): void
     {
-        file_put_contents($this->cacheFile, json_encode($cache, JSON_PRETTY_PRINT));
+        file_put_contents($this->cacheFile, json_encode($this->cache, JSON_PRETTY_PRINT));
+    }
+
+    public function isCached(string $key): bool
+    {
+        return isset($this->cache[$key]);
+    }
+
+    public function get(string $key): ?int
+    {
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key];
+        }
+
+        return null;
+    }
+
+    public function set(string $key, int $value): void
+    {
+        $this->cache[$key] = $value;
+        $this->saveCache();
     }
 }

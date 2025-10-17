@@ -1,14 +1,23 @@
 <?php
+declare(strict_types=1);
 
 namespace Vladyslav10111\Collection;
 
 class UniqueCharCounter
 {
+    private CharCounterCache $cache;
+
+    public function __construct(CharCounterCache $cache)
+    {
+        $this->cache = $cache;
+    }
 
     public function countUniqueChars(string $input): int
     {
-
-        $uniqueCharsCache = new CharCounterCache();
+        $cachedValue = $this->cache->get($input);
+        if ($cachedValue !== null) {
+            return $cachedValue;
+        }
 
         $length = mb_strlen($input, 'UTF-8');
         $chars = [];
@@ -16,14 +25,10 @@ class UniqueCharCounter
             $chars[] = mb_substr($input, $i, 1, 'UTF-8');
         }
 
-        $counts = array_count_values($chars);
-        $uniqueCount = count($counts);
+        $uniqueCount = count(array_count_values($chars));
 
-        $cache[$input] = $uniqueCount;
-        $uniqueCharsCache->saveCache($cache);
+        $this->cache->set($input, $uniqueCount);
 
         return $uniqueCount;
     }
-
-
 }
