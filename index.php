@@ -17,11 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($input !== '') {
         $uniqueCount = $counter->countUniqueChars($input);
 
-        if ($cache->isCached($input)) {
-            $result = "Taken from cache: $uniqueCount";
-        } else {
-            $result = "Unique characters: $uniqueCount";
-        }
+        $result = "Unique characters: $uniqueCount";
+
     }
 }
 
