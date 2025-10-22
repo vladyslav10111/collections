@@ -8,11 +8,21 @@
             "Vladyslav10111\\Collection\\": "src/"
         }
     },
+  "autoload-dev": {
+    "psr-4": {
+      "Vladyslav10111\\Collection\\Tests\\": "tests/"
+    }
+  },
     "authors": [
         {
             "name": "vladyslav10111"
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require-dev": {
+        "phpunit/phpunit": "12",
+        "phpstan/phpstan": "^2.1",
+        "vimeo/psalm": "^6.13",
+        "squizlabs/php_codesniffer": "^4.0"
+    }
 }
