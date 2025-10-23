@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Vladyslav10111\Collection\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Vladyslav10111\Collection\CharCounterCache;
 use Vladyslav10111\Collection\UniqueCharCounter;
 
 require __DIR__ . '/../vendor/autoload.php';
