@@ -6,9 +6,8 @@ require __DIR__ . '/vendor/autoload.php';
 use Vladyslav10111\Collection\UniqueCharCounter;
 use Vladyslav10111\Collection\CharCounterCache;
 
-$cache = new CharCounterCache();
-
-$counter = new UniqueCharCounter($cache);
+$counter = new UniqueCharCounter();
+$cache = new CharCounterCache($counter);
 
 $result = null;
 
@@ -16,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = trim($_POST['text'] ?? '');
 
     if ($input !== '') {
-        $uniqueCount = $counter->countUniqueChars($input);
+        $uniqueCount = $cache->getOrCalculate($input);
 
         $result = "Unique characters: $uniqueCount";
 

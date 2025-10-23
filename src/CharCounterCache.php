@@ -8,9 +8,11 @@ class CharCounterCache
 {
     private string $cacheFile;
     private array $cache = [];
+    private UniqueCharCounter $counter;
 
-    public function __construct(string $cacheFile = __DIR__ . '/cache.json')
+    public function __construct(UniqueCharCounter $counter, string $cacheFile = __DIR__ . '/cache.json')
     {
+        $this->counter = $counter;
         $this->cacheFile = $cacheFile;
 
         if (!file_exists($this->cacheFile)) {
@@ -18,6 +20,18 @@ class CharCounterCache
         }
 
         $this->cache = $this->loadCache();
+    }
+
+    public function getOrCalculate(string $input): int
+    {
+        if ($this->isCached($input)) {
+            return $this->get($input);
+        }
+
+        $uniqueCount = $this->counter->calculateUniqueChars($input);
+        $this->set($input, $uniqueCount);
+
+        return $uniqueCount;
     }
 
     private function loadCache(): array
@@ -30,34 +44,25 @@ class CharCounterCache
 
         $decoded = json_decode($data, true);
 
-        if (is_array($decoded)) {
-            return $decoded;
-        }
-
-        return [];
+        return is_array($decoded) ? $decoded : [];
     }
-
 
     private function saveCache(): void
     {
         file_put_contents($this->cacheFile, json_encode($this->cache, JSON_PRETTY_PRINT));
     }
 
-    public function isCached(string $key): bool
+    private function isCached(string $key): bool
     {
         return isset($this->cache[$key]);
     }
 
-    public function get(string $key): ?int
+    private function get(string $key): ?int
     {
-        if (isset($this->cache[$key])) {
-            return $this->cache[$key];
-        }
-
-        return null;
+        return $this->cache[$key] ?? null;
     }
 
-    public function set(string $key, int $value): void
+    private function set(string $key, int $value): void
     {
         $this->cache[$key] = $value;
         $this->saveCache();
