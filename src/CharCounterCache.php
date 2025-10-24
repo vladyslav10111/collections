@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Vladyslav10111\Collection;
 
-class CharCounterCache
+class CharCounterCache implements CharCounterInterface
 {
+    private CharCounterInterface $counter;
     private string $cacheFile;
     private array $cache = [];
-    private UniqueCharCounter $counter;
 
-    public function __construct(UniqueCharCounter $counter, string $cacheFile = __DIR__ . '/cache.json')
+    public function __construct(CharCounterInterface $counter, string $cacheFile = __DIR__ . '/../cache.json')
     {
         $this->counter = $counter;
         $this->cacheFile = $cacheFile;
@@ -22,13 +22,13 @@ class CharCounterCache
         $this->cache = $this->loadCache();
     }
 
-    public function getOrCalculate(string $input): int
+    public function count(string $input): int
     {
         if ($this->isCached($input)) {
             return $this->get($input);
         }
 
-        $uniqueCount = $this->counter->calculateUniqueChars($input);
+        $uniqueCount = $this->counter->count($input);
         $this->set($input, $uniqueCount);
 
         return $uniqueCount;
@@ -37,13 +37,11 @@ class CharCounterCache
     private function loadCache(): array
     {
         $data = file_get_contents($this->cacheFile);
-
         if (!$data) {
             return [];
         }
 
         $decoded = json_decode($data, true);
-
         return is_array($decoded) ? $decoded : [];
     }
 

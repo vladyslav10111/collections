@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Vladyslav10111\Collection;
 
-class UniqueCharCounter
+class UniqueCharCounter implements CharCounterInterface
 {
-    public function calculateUniqueChars(string $input): int
+    public function count(string $input): int
     {
         $length = mb_strlen($input, 'UTF-8');
         $chars = [];

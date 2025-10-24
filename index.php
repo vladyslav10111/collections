@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = trim($_POST['text'] ?? '');
 
     if ($input !== '') {
-        $uniqueCount = $cache->getOrCalculate($input);
+        $uniqueCount = $cache->count($input);
 
         $result = "Unique characters: $uniqueCount";
 

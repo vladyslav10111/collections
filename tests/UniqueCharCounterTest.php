@@ -18,7 +18,7 @@ class UniqueCharCounterTest extends TestCase
 
         $counter = new UniqueCharCounter();
 
-        $result = $counter->calculateUniqueChars($inputString);
+        $result = $counter->count($inputString);
 
         $this->assertIsInt($result);
     }
@@ -29,7 +29,7 @@ class UniqueCharCounterTest extends TestCase
 
         $counter = new UniqueCharCounter();
 
-        $result = $counter->calculateUniqueChars($inputString);
+        $result = $counter->count($inputString);
 
         $this->assertEquals($cachedValue, $result);
     }
