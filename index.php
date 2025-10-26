@@ -4,10 +4,10 @@ declare(strict_types=1);
 require __DIR__ . '/vendor/autoload.php';
 
 use Vladyslav10111\Collection\UniqueCharCounter;
-use Vladyslav10111\Collection\CharCounterCache;
+use Vladyslav10111\Collection\RedisCharCounterCache;
 
 $counter = new UniqueCharCounter();
-$cache = new CharCounterCache($counter);
+$cache = new RedisCharCounterCache($counter);
 
 $result = null;
 

@@ -24,5 +24,8 @@
         "phpstan/phpstan": "^2.1",
         "vimeo/psalm": "^6.13",
         "squizlabs/php_codesniffer": "^4.0"
+    },
+    "require": {
+        "predis/predis": "^3.2"
     }
 }

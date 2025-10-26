@@ -22,6 +22,7 @@ class UniqueCharCounterTest extends TestCase
 
         $this->assertIsInt($result);
     }
+
     public function testCalculateUniqueCharsActualLogic(): void
     {
         $inputString = 'hello';
