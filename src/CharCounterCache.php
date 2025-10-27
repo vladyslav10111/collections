@@ -7,62 +7,26 @@ namespace Vladyslav10111\Collection;
 class CharCounterCache implements CharCounterInterface
 {
     private CharCounterInterface $counter;
-    private string $cacheFile;
-    private array $cache = [];
+    private CacheStorageInterface $storage;
 
-    public function __construct(CharCounterInterface $counter, string $cacheFile = __DIR__ . '/../cache.json')
+    public function __construct(CharCounterInterface $counter, CacheStorageInterface $storage)
     {
         $this->counter = $counter;
-        $this->cacheFile = $cacheFile;
-
-        if (!file_exists($this->cacheFile)) {
-            file_put_contents($this->cacheFile, json_encode([]));
-        }
-
-        $this->cache = $this->loadCache();
+        $this->storage = $storage;
     }
 
     public function count(string $input): int
     {
-        if ($this->isCached($input)) {
-            return $this->get($input);
+        $key = md5($input);
+
+        $cached = $this->storage->get($key);
+        if ($cached !== null) {
+            return $cached;
         }
 
         $uniqueCount = $this->counter->count($input);
-        $this->set($input, $uniqueCount);
+        $this->storage->set($key, $uniqueCount);
 
         return $uniqueCount;
-    }
-
-    private function loadCache(): array
-    {
-        $data = file_get_contents($this->cacheFile);
-        if (!$data) {
-            return [];
-        }
-
-        $decoded = json_decode($data, true);
-        return is_array($decoded) ? $decoded : [];
-    }
-
-    private function saveCache(): void
-    {
-        file_put_contents($this->cacheFile, json_encode($this->cache, JSON_PRETTY_PRINT));
-    }
-
-    private function isCached(string $key): bool
-    {
-        return isset($this->cache[$key]);
-    }
-
-    private function get(string $key): ?int
-    {
-        return $this->cache[$key] ?? null;
-    }
-
-    private function set(string $key, int $value): void
-    {
-        $this->cache[$key] = $value;
-        $this->saveCache();
     }
 }
