@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Vladyslav10111\Collection;
+
 class FileCacheStorage implements CacheStorageInterface
 {
     private string $cacheFile;
@@ -19,12 +20,14 @@ class FileCacheStorage implements CacheStorageInterface
 
     public function get(string $key): ?int
     {
-        return $this->cache[$key] ?? null;
+        $hashed = md5($key);
+        return $this->cache[$hashed] ?? null;
     }
 
     public function set(string $key, int $value): void
     {
-        $this->cache[$key] = $value;
+        $hashed = md5($key);
+        $this->cache[$hashed] = $value;
         file_put_contents($this->cacheFile, json_encode($this->cache, JSON_PRETTY_PRINT));
     }
 }

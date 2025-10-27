@@ -7,6 +7,8 @@ namespace Vladyslav10111\Collection\Tests;
 use PHPUnit\Framework\TestCase;
 use Vladyslav10111\Collection\CharCounterCache;
 use Vladyslav10111\Collection\CharCounterInterface;
+use Vladyslav10111\Collection\CacheStorageInterface;
+
 
 class CharCounterCacheTest extends TestCase
 {
@@ -29,14 +31,18 @@ class CharCounterCacheTest extends TestCase
 
     public function testReturnsCachedValueWithoutRecalculating(): void
     {
-        $cachedData = ['hello' => 4];
-        file_put_contents($this->cacheFile, json_encode($cachedData));
+        $storageMock = $this->createMock(CacheStorageInterface::class);
+        $storageMock->expects($this->once())
+            ->method('get')
+            ->with('hello')
+            ->willReturn(4);
 
-        $mockCounter = $this->createMock(CharCounterInterface::class);
+        $counterMock = $this->createMock(CharCounterInterface::class);
+        $counterMock->expects($this->never())
+            ->method('count');
 
-        $mockCounter->expects($this->never())->method('count');
+        $cache = new CharCounterCache($counterMock, $storageMock);
 
-        $cache = new CharCounterCache($mockCounter, $this->cacheFile);
         $result = $cache->count('hello');
 
         $this->assertSame(4, $result);
@@ -44,29 +50,27 @@ class CharCounterCacheTest extends TestCase
 
     public function testCalculatesAndSavesToCacheIfNotCached(): void
     {
-        $mockCounter = $this->createMock(CharCounterInterface::class);
-        $mockCounter->expects($this->once())
+        $storageMock = $this->createMock(CacheStorageInterface::class);
+        $storageMock->expects($this->once())
+            ->method('get')
+            ->with('hello')
+            ->willReturn(null);
+
+        $storageMock->expects($this->once())
+            ->method('set')
+            ->with('hello', 4);
+
+        $counterMock = $this->createMock(CharCounterInterface::class);
+        $counterMock->expects($this->once())
             ->method('count')
             ->with('hello')
             ->willReturn(4);
 
-        $cache = new CharCounterCache($mockCounter, $this->cacheFile);
+        $cache = new CharCounterCache($counterMock, $storageMock);
+
         $result = $cache->count('hello');
 
         $this->assertSame(4, $result);
-
-        $data = json_decode(file_get_contents($this->cacheFile), true);
-        $this->assertSame(['hello' => 4], $data);
     }
 
-    public function testCreatesCacheFileIfNotExists(): void
-    {
-        $mockCounter = $this->createMock(CharCounterInterface::class);
-        $mockCounter->expects($this->once())->method('count')->willReturn(4);
-
-        $cache = new CharCounterCache($mockCounter, $this->cacheFile);
-        $cache->count('hello');
-
-        $this->assertFileExists($this->cacheFile);
-    }
 }

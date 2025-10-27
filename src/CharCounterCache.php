@@ -17,15 +17,13 @@ class CharCounterCache implements CharCounterInterface
 
     public function count(string $input): int
     {
-        $key = md5($input);
-
-        $cached = $this->storage->get($key);
+        $cached = $this->storage->get($input);
         if ($cached !== null) {
             return $cached;
         }
 
         $uniqueCount = $this->counter->count($input);
-        $this->storage->set($key, $uniqueCount);
+        $this->storage->set($input, $uniqueCount);
 
         return $uniqueCount;
     }
