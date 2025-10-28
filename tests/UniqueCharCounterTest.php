@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Vladyslav10111\Collection\Tests;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Vladyslav10111\Collection\UniqueCharCounter;
 
 class UniqueCharCounterTest extends TestCase
@@ -30,21 +31,23 @@ class UniqueCharCounterTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @dataProvider stringProvider
-     */
+    #[DataProvider('stringProvider')]
     public function testCountUniqueCharsWithVariousInputs(string $input, int $expected): void
     {
         $counter = new UniqueCharCounter();
-        $result = $counter->count($input);
-
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $counter->count($input));
     }
 
     public static function stringProvider(): array
     {
         return [
             ['abbbccdf', 3],
+            ['hello', 3],
+            ['abc', 3],
+            ['aabbcc', 0],
+            ['aab', 1],
+            ['a', 1],
+            ['', 0],
         ];
     }
 }
