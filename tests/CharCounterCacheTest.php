@@ -35,7 +35,7 @@ class CharCounterCacheTest extends TestCase
         $storageMock->expects($this->once())
             ->method('get')
             ->with('hello')
-            ->willReturn(4);
+            ->willReturn(3);
 
         $counterMock = $this->createMock(CharCounterInterface::class);
         $counterMock->expects($this->never())
@@ -45,7 +45,7 @@ class CharCounterCacheTest extends TestCase
 
         $result = $cache->count('hello');
 
-        $this->assertSame(4, $result);
+        $this->assertSame(3, $result);
     }
 
     public function testCalculatesAndSavesToCacheIfNotCached(): void
@@ -58,19 +58,19 @@ class CharCounterCacheTest extends TestCase
 
         $storageMock->expects($this->once())
             ->method('set')
-            ->with('hello', 4);
+            ->with('hello', 3);
 
         $counterMock = $this->createMock(CharCounterInterface::class);
         $counterMock->expects($this->once())
             ->method('count')
             ->with('hello')
-            ->willReturn(4);
+            ->willReturn(3);
 
         $cache = new CharCounterCache($counterMock, $storageMock);
 
         $result = $cache->count('hello');
 
-        $this->assertSame(4, $result);
+        $this->assertSame(3, $result);
     }
 
 }

@@ -15,6 +15,10 @@ class UniqueCharCounter implements CharCounterInterface
             $chars[] = mb_substr($input, $i, 1, 'UTF-8');
         }
 
-        return count(array_count_values($chars));
+        $counts = array_count_values($chars);
+
+        $uniqueChars = array_filter($counts, fn($count) => $count === 1);
+
+        return count($uniqueChars);
     }
 }
