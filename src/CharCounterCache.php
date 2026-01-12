@@ -1,30 +1,27 @@
-<?php
+# PHP String Unique Characters Counter
 
-declare(strict_types=1);
+Simple PHP application that accepts a string via HTML form, checks if this string was already processed using cache (file cache or Redis), and returns the number of unique characters.
 
-namespace Vladyslav10111\Collection;
+If the string exists in cache, the result is returned from cache.  
+If not, the application calculates the number of unique characters, returns the result, and saves it to cache.
 
-class CharCounterCache implements CharCounterInterface
-{
-    private CharCounterInterface $counter;
-    private CacheStorageInterface $storage;
+---
 
-    public function __construct(CharCounterInterface $counter, CacheStorageInterface $storage)
-    {
-        $this->counter = $counter;
-        $this->storage = $storage;
-    }
+## Features
 
-    public function count(string $input): int
-    {
-        $cached = $this->storage->get($input);
-        if ($cached !== null) {
-            return $cached;
-        }
+- HTML form input
+- Cache check before processing
+- File-based cache or Redis cache
+- Counts unique characters in a string
+- Avoids recalculation for repeated input
 
-        $uniqueCount = $this->counter->count($input);
-        $this->storage->set($input, $uniqueCount);
+---
 
-        return $uniqueCount;
-    }
-}
+## How It Works
+
+1. User submits a string via form
+2. Application generates a cache key based on the input string
+3. Cache is checked:
+   - If found → return cached result
+   - If not found → calculate unique characters
+4. Result is returned and saved to cache
